@@ -6,7 +6,7 @@ To run the app locally:
      ```
      pip install -r requirements.txt
      ```
-
+  3. Run this command in the terminal to start the application
      ```
      streamlit run app.py
      ```
