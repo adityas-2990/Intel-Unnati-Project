@@ -22,6 +22,8 @@ def convert_categorical_to_numeric(df):
         df_encoded[col] = le.fit_transform(df[col])
     return df_encoded
 
+
+# Function to handle missing values using KNNImputer
 def KNN_missing_values(df , n_neighbors):
     df_imputed = df.copy()
     df_imputed = convert_booleans_to_numeric(df_imputed)
@@ -46,6 +48,7 @@ def main():
     st.sidebar.header('Upload Data')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
 
+    # Display the dataset
     if uploaded_file is not None:
         st.sidebar.write('File uploaded successfully!')
         df = pd.read_csv(uploaded_file)
@@ -94,12 +97,10 @@ def main():
                     st.write('Invalid Method')
 
                 # Display the number of missing values in the column after handling
-                st.write(f'The number of missing values in the "{column}" after handling are: ', df[column].isnull().sum())
+                st.write(f'The data set after handling missing values is', df.head())
 
 
-
-        
-        # User KNNImputer to handle missing values
+        # Use KNNImputer to handle missing values
         st.sidebar.header('Use KNN Imputer to Handle Missing Values')
         n_neighbors = st.sidebar.slider('Number of Neighbors', min_value=1, max_value=10)
         if st.sidebar.button("Handle Missing Values with KNN Imputer", key='handle_missing_values_knn'):
@@ -109,31 +110,48 @@ def main():
         
 
 
-        columns = df.columns.tolist()
-        st.sidebar.header('Select Columns')
-        x_feature = st.sidebar.selectbox('X-axis', options=columns)
-        y_feature = st.sidebar.selectbox('Y-axis', options=columns)
+        #Dividing the dataset into Categorical and Numerical Columns
+        categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+
+        #Selecting the columns for plotting(Categorical)
+        st.sidebar.header('For Categorical Columns')
+        x_feature_category = st.sidebar.selectbox('X-axis', options=numerical_columns , key='x_feature_category')
+        y_feature_category = st.sidebar.selectbox('Y-axis', options=categorical_columns , key='y_feature_category')
+
+        #Bar Graph for Categorical Columns
+        if st.sidebar.button('Plot Data' , key='plot_data_category'):
+            if x_feature_category and y_feature_category:
+                fig = plt.figure()
+                sns.barplot(x=x_feature_category, y=y_feature_category, data=df)
+                st.pyplot(fig)
+
+
+        #Selecting the columns for plotting(Numerical)
+        st.sidebar.header('For Numerical Columns')
+        x_feature_numeric = st.sidebar.selectbox('X-axis', options=numerical_columns , key='x_feature_numeric')
+        y_feature_numeric = st.sidebar.selectbox('Y-axis', options=numerical_columns , key='y_feature_numeric')
         graph_type = st.sidebar.selectbox('Graph Type', options=['Scatter Plot', 'Line Plot', 'Bar Plot'])
 
-        # Plot the data
-        if st.sidebar.button('Plot Data' , key='plot_data'):
-            if x_feature and y_feature:
+        #Different Graphs for Numerical Columns
+        if st.sidebar.button('Plot Data' , key='plot_data_numeric'):
+            if x_feature_numeric and y_feature_numeric:
                 if graph_type == 'Scatter Plot':
                     st.write('Scatter Plot')
                     fig = plt.figure()
-                    sns.scatterplot(x=x_feature, y=y_feature, data=df)
+                    sns.scatterplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
                     st.pyplot(fig)
 
                 elif graph_type == 'Line Plot':
                     st.write('Line Plot')
                     fig = plt.figure()
-                    sns.lineplot(x=x_feature, y=y_feature, data=df)
+                    sns.lineplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
                     st.pyplot(fig)
 
                 elif graph_type == 'Bar Plot':
                     st.write('Bar Plot')
                     fig = plt.figure()
-                    sns.barplot(x=x_feature, y=y_feature, data=df)
+                    sns.barplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
                     st.pyplot(fig)
 
                 else:
