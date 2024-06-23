@@ -41,8 +41,8 @@ def KNN_missing_values(df , n_neighbors):
     return df
 
 def main():
-    st.title('Data Visualization App')
-    st.write('Welcome to the Data Visualization App!')
+    st.title('Data Analysis App')
+    st.write('Welcome to the Data Analysis App!')
 
     # Load the dataset
     st.sidebar.header('Upload Data')
@@ -53,6 +53,10 @@ def main():
         st.sidebar.write('File uploaded successfully!')
         df = pd.read_csv(uploaded_file)
         st.write(df.head())
+
+        #Store the dataframe in session state
+        if 'df' not in st.session_state:
+            st.session_state.df = df
 
         # Display the dataset shape
         st.write("The number of features in the dataset are: ", df.shape[1])
@@ -80,39 +84,52 @@ def main():
         st.sidebar.header('Handle Missing Values')
         missing_values = df.isnull().sum()
         missing_columns = missing_values[missing_values > 0].index.tolist()
+        
         if missing_columns:
             column = st.sidebar.selectbox('Select Column', options=missing_columns)
             method = st.sidebar.radio(f'How to handle missing values in {column}', options=['Fill with Mean', 'Fill with Median', 'Fill with Mode', 'Drop Column'])
 
+            if 'column' not in st.session_state:
+                st.session_state.column = column
+            if 'method' not in st.session_state:
+                st.session_state.method = method
+            
+    
+            st.write(st.session_state.df.head())
             if st.sidebar.button("Handle Missing Values" , key='handle_missing_values'):
                 if method == 'Fill with Mean':
-                    df[column].fillna(df[column].mean(), inplace=True)
+                    st.session_state.df[column].fillna(df[column].mean(), inplace=True)
                 elif method == 'Fill with Median':
-                    df[column].fillna(df[column].median(), inplace=True)
+                    st.session_state.df[column].fillna(df[column].median(), inplace=True)
                 elif method == 'Fill with Mode':
-                    df[column].fillna(df[column].mode()[0], inplace=True)
+                    st.session_state.df[column].fillna(df[column].mode()[0], inplace=True)
                 elif method == 'Drop Column':
-                    df.drop(column, axis=1, inplace=True)
+                    st.session_state.df.drop(column, axis=1, inplace=True)
                 else:
                     st.write('Invalid Method')
 
                 # Display the number of missing values in the column after handling
-                st.write(f'The data set after handling missing values is', df.head())
+                st.write(f'The data set after handling missing values is', st.session_state.df.head())
 
 
         # Use KNNImputer to handle missing values
         st.sidebar.header('Use KNN Imputer to Handle Missing Values')
         n_neighbors = st.sidebar.slider('Number of Neighbors', min_value=1, max_value=10)
         if st.sidebar.button("Handle Missing Values with KNN Imputer", key='handle_missing_values_knn'):
-            df = KNN_missing_values(df, n_neighbors)
-            st.write('The number of missing values in the dataset after handling are: ', df.isnull().sum().sum())
-            st.write('The dataset after handling missing values is: ', df.head())
+            df = KNN_missing_values(st.session_state.df, n_neighbors)
+            st.write('The number of missing values in the dataset after handling are: ', st.session_state.df.isnull().sum().sum())
+            st.write('The dataset after handling missing values is: ', st.session_state.df.head())
         
+
+        if st.sidebar.button('Reset Data', key='reset_data'):
+            st.session_state.df = df
+            st.write('Data has been reset successfully!')
+            st.write(st.session_state.df.head())
 
 
         #Dividing the dataset into Categorical and Numerical Columns
-        categorical_columns = df.select_dtypes(include=['object', 'category']).columns.tolist()
-        numerical_columns = df.select_dtypes(include=['int64', 'float64']).columns.tolist()
+        categorical_columns = st.session_state.df.select_dtypes(include=['object', 'category']).columns.tolist()
+        numerical_columns = st.session_state.df.select_dtypes(include=['int64', 'float64']).columns.tolist()
 
         #Selecting the columns for plotting(Categorical)
         st.sidebar.header('For Categorical Columns')
@@ -123,7 +140,7 @@ def main():
         if st.sidebar.button('Plot Data' , key='plot_data_category'):
             if x_feature_category and y_feature_category:
                 fig = plt.figure()
-                sns.barplot(x=x_feature_category, y=y_feature_category, data=df)
+                sns.barplot(x=x_feature_category, y=y_feature_category, data=st.session_state.df)
                 st.pyplot(fig)
 
 
@@ -139,19 +156,19 @@ def main():
                 if graph_type == 'Scatter Plot':
                     st.write('Scatter Plot')
                     fig = plt.figure()
-                    sns.scatterplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
+                    sns.scatterplot(x=x_feature_numeric, y=y_feature_numeric, data=st.session_state.df)
                     st.pyplot(fig)
 
                 elif graph_type == 'Line Plot':
                     st.write('Line Plot')
                     fig = plt.figure()
-                    sns.lineplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
+                    sns.lineplot(x=x_feature_numeric, y=y_feature_numeric, data=st.session_state.df)
                     st.pyplot(fig)
 
                 elif graph_type == 'Bar Plot':
                     st.write('Bar Plot')
                     fig = plt.figure()
-                    sns.barplot(x=x_feature_numeric, y=y_feature_numeric, data=df)
+                    sns.barplot(x=x_feature_numeric, y=y_feature_numeric, data=st.session_state.df)
                     st.pyplot(fig)
 
                 else:
