@@ -59,17 +59,17 @@ def main():
             st.session_state.df = df
 
         # Display the dataset shape
-        st.write("The number of features in the dataset are: ", df.shape[1])
-        st.write("The number of samples in the dataset are: ", df.shape[0])
+        st.write("The number of features in the dataset are: ", st.session_state.df.shape[1])
+        st.write("The number of samples in the dataset are: ", st.session_state.df.shape[0])
 
         # Display the dataset columns
-        st.write('The dataset columns are: ', df.columns)
+        st.write('The dataset columns are: ', st.session_state.df.columns)
 
         # Display the dataset summary
-        st.write('The dataset summary is: ', df.describe())
+        st.write('The dataset summary is: ', st.session_state.df.describe())
 
         # Display columns with missing values
-        missing_values = df.isnull().sum()
+        missing_values = st.session_state.df.isnull().sum()
         st.write('The columns with missing values are: ')
         st.write(missing_values[missing_values>0])
 
@@ -77,7 +77,7 @@ def main():
         #Creating heatmap for the missing values
         st.write('Heatmap for missing values')
         fig = plt.figure()
-        sns.heatmap(df.isnull(), cbar=False)
+        sns.heatmap(st.session_state.df.isnull(), cbar=False)
         st.pyplot(fig)
 
         #Creating Buttons to choose the method of handling missing values
