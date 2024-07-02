@@ -74,11 +74,11 @@ def main():
         st.write('The columns with missing values are: ')
         st.write(missing_values[missing_values>0])
 
-
         #Creating heatmap for the missing values
         st.write('Heatmap for missing values')
+        df_corr = convert_categorical_to_numeric(st.session_state.df)
         fig = plt.figure()
-        sns.heatmap(st.session_state.df.isnull(), cbar=False)
+        sns.heatmap(df_corr.isnull(), cbar=False)
         st.pyplot(fig)
 
         #Creating Buttons to choose the method of handling missing values
@@ -174,6 +174,20 @@ def main():
 
                 else:
                     st.write('Invalid Graph Type')
+        
+        #Plotting clusters in a column
+        st.sidebar.header('Clustering')
+        cluster_column = st.sidebar.selectbox('Select Column', options=numerical_columns)
+        n_clusters = st.sidebar.slider('Number of Clusters', min_value=2, max_value=10)
+        if st.sidebar.button('Plot Clusters', key='plot_clusters'):
+            if cluster_column:
+                from sklearn.cluster import KMeans
+                kmeans = KMeans(n_clusters=n_clusters)
+                st.session_state.df['Cluster'] = kmeans.fit_predict(st.session_state.df[[cluster_column]])
+                fig = plt.figure()
+                sns.scatterplot(x=cluster_column, y= cluster_column, hue='Cluster', data=st.session_state.df)
+                st.pyplot(fig)
+
 
 
 # Call the main function directly
