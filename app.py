@@ -128,14 +128,15 @@ def main():
             st.write(st.session_state.df.head())
 
 
-        #Dividing the dataset into Categorical and Numerical Columns
-        categorical_columns = st.session_state.df.select_dtypes(include=['object', 'category']).columns.tolist()
+        #Drop down menu to select the categorical colums in the dataset
+        st.sidebar.header('Select Categorical Columns')
+        categorical_columns = st.sidebar.multiselect('Select Columns', options=st.session_state.df.columns.tolist())
         numerical_columns = st.session_state.df.select_dtypes(include=['int64', 'float64']).columns.tolist()
 
         #Selecting the columns for plotting(Categorical)
         st.sidebar.header('For Categorical Columns')
         x_feature_category = st.sidebar.selectbox('X-axis', options=numerical_columns , key='x_feature_category')
-        y_feature_category = st.sidebar.selectbox('Y-axis', options=categorical_columns , key='y_feature_category')
+        y_feature_category = st.sidebar.selectbox('Y-axis(Categories)', options=categorical_columns , key='y_feature_category')
 
         #Bar Graph for Categorical Columns
         if st.sidebar.button('Plot Data' , key='plot_data_category'):
