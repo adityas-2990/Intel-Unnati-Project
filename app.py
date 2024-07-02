@@ -40,6 +40,7 @@ def KNN_missing_values(df , n_neighbors):
 
     return df
 
+# Main function
 def main():
     st.title('Data Analysis App')
     st.write('Welcome to the Data Analysis App!')
