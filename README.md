@@ -8,7 +8,7 @@ To run the app locally:
      ```
   3. Run this command in the terminal to start the application
      ```
-     streamlit run app.py
+     streamlit run src/app.py
      ```
 
      
