@@ -48,10 +48,12 @@ def main():
     # Load the dataset
     st.sidebar.header('Upload Data')
     uploaded_file = st.sidebar.file_uploader("Upload your input CSV file", type=["csv"])
+    st.sidebar.markdown("""---""") 
 
     # Display the dataset
     if uploaded_file is not None:
         st.sidebar.write('File uploaded successfully!')
+        st.sidebar.markdown("""---""") 
         df = pd.read_csv(uploaded_file)
         st.markdown("""---""") 
         st.subheader('Your Dataset: ')
@@ -120,6 +122,7 @@ def main():
                 st.pyplot(fig)
             else:
                 st.write('Invalid Method')
+        st.sidebar.markdown("""---""") 
 
 
         #Creating Buttons to choose the method of handling missing values
@@ -153,6 +156,7 @@ def main():
 
                 # Display the number of missing values in the column after handling
                 st.write(f'The data set after handling missing values is', st.session_state.df.head())
+            st.sidebar.markdown("""---""") 
 
 
         # Use KNNImputer to handle missing values
@@ -162,12 +166,14 @@ def main():
             df = KNN_missing_values(st.session_state.df, n_neighbors)
             #st.write('The number of missing values in the dataset after handling are: ', st.session_state.df.isnull().sum().sum())
             st.write('The dataset after handling missing values is: ', st.session_state.df.head())
+        st.sidebar.markdown("""---""") 
         
 
         if st.sidebar.button('Reset Data', key='reset_data'):
             st.session_state.df = df
             st.write('Data has been reset successfully!')
             st.write(st.session_state.df.head())
+        st.sidebar.markdown("""---""") 
 
 
         st.sidebar.header('Data Visualization')
@@ -223,6 +229,8 @@ def main():
 
                 else:
                     st.write('Invalid Graph Type')
+
+        st.sidebar.markdown("""---""") 
         
         #Plotting clusters in a column
         st.sidebar.header('Clustering')
@@ -238,6 +246,7 @@ def main():
                 fig = plt.figure()
                 sns.scatterplot(x=cluster_column, y= cluster_column, hue='Cluster', data=st.session_state.df)
                 st.pyplot(fig)
+    st.sidebar.markdown("""---""") 
 
 
 
