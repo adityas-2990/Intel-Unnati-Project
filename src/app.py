@@ -105,7 +105,7 @@ def main():
             if method_outliers == 'Z-Score':
                 z = np.abs((st.session_state.df[column_outliers] - st.session_state.df[column_outliers].mean()) / st.session_state.df[column_outliers].std())
                 outliers = st.session_state.df[z > 3]
-                st.write(f'The outliers in the dataset based on {column_outliers} are: ', outliers)
+                st.write(f'The outliers in the dataset based on {column_outliers} using z-score method are: ', outliers)
                 fig = plt.figure()
                 sns.boxplot(x=column_outliers, data=st.session_state.df)
                 st.pyplot(fig)
@@ -114,7 +114,7 @@ def main():
                 Q3 = st.session_state.df[column_outliers].quantile(0.75)
                 IQR = Q3 - Q1
                 outliers = st.session_state.df[(st.session_state.df[column_outliers] < (Q1 - 1.5 * IQR)) | (st.session_state.df[column_outliers] > (Q3 + 1.5 * IQR))]
-                st.write(f'The outliers in the dataset based on {column_outliers} are: ', outliers)
+                st.write(f'The outliers in the dataset based on {column_outliers} using IQR method are: ', outliers)
                 fig = plt.figure()
                 sns.boxplot(x=column_outliers, data=st.session_state.df)
                 st.pyplot(fig)
