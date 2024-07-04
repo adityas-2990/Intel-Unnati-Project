@@ -93,6 +93,35 @@ def main():
 
         st.markdown("""---""") 
 
+        
+
+        #Plot and highlight Outliers in the user selected column
+        st.sidebar.header('Outliers')
+        st.sidebar.write('Outliers are the data points that are significantly different from the other data points in the dataset. The outliers can be detected by plotting the data points in the column selected by the user. The user can select the column and the method to detect the outliers.')
+        column_outliers = st.sidebar.selectbox('Select Column', options=st.session_state.df.columns.tolist())
+        method_outliers = st.sidebar.radio(f'How to detect outliers in {column_outliers}', options=['Z-Score', 'IQR'])
+        if st.sidebar.button('Detect Outliers', key='detect_outliers'):
+            st.subheader('Outliers')
+            if method_outliers == 'Z-Score':
+                z = np.abs((st.session_state.df[column_outliers] - st.session_state.df[column_outliers].mean()) / st.session_state.df[column_outliers].std())
+                outliers = st.session_state.df[z > 3]
+                st.write(f'The outliers in the dataset based on {column_outliers} are: ', outliers)
+                fig = plt.figure()
+                sns.boxplot(x=column_outliers, data=st.session_state.df)
+                st.pyplot(fig)
+            elif method_outliers == 'IQR':
+                Q1 = st.session_state.df[column_outliers].quantile(0.25)
+                Q3 = st.session_state.df[column_outliers].quantile(0.75)
+                IQR = Q3 - Q1
+                outliers = st.session_state.df[(st.session_state.df[column_outliers] < (Q1 - 1.5 * IQR)) | (st.session_state.df[column_outliers] > (Q3 + 1.5 * IQR))]
+                st.write(f'The outliers in the dataset based on {column_outliers} are: ', outliers)
+                fig = plt.figure()
+                sns.boxplot(x=column_outliers, data=st.session_state.df)
+                st.pyplot(fig)
+            else:
+                st.write('Invalid Method')
+
+
         #Creating Buttons to choose the method of handling missing values
         st.sidebar.header('Handle Missing Values')
         st.sidebar.write("Missing values can be dealt with by filling them with the mean, median, mode or by dropping the column. There is also an option to use KNN Imputer to handle missing values.")
@@ -209,6 +238,7 @@ def main():
                 fig = plt.figure()
                 sns.scatterplot(x=cluster_column, y= cluster_column, hue='Cluster', data=st.session_state.df)
                 st.pyplot(fig)
+
 
 
 
