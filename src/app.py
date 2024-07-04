@@ -43,7 +43,7 @@ def KNN_missing_values(df , n_neighbors):
 # Main function
 def main():
     st.title('Data Analysis App 📊')
-    st.write('Welcome to the Data Analysis App! This app is designed to help you analyze your dataset. You can upload your dataset, handle missing values, visualize your data, and perform clustering on your dataset with the help of a few simple clicks. Let\'s get started!!!')
+    st.write('Welcome to the Data Analysis App! This app is designed to help you analyze your dataset. You can upload your dataset, handle missing values, check for outliers, visualize your data, and perform clustering on your dataset with the help of a few simple clicks. Let\'s get started!!!')
 
     # Load the dataset
     st.sidebar.header('Upload Data')
