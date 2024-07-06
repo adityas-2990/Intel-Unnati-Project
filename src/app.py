@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
+import base64
 from sklearn.preprocessing import LabelEncoder
 from sklearn.impute import KNNImputer
 
@@ -21,6 +22,13 @@ def convert_categorical_to_numeric(df):
     for col in categorical_cols:
         df_encoded[col] = le.fit_transform(df[col])
     return df_encoded
+
+# Function to create a download link for the dataframe
+def get_table_download_link(df):
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="data.csv">Download CSV File</a>'
+    return href
 
 
 # Function to handle missing values using KNNImputer
@@ -246,7 +254,20 @@ def main():
                 fig = plt.figure()
                 sns.scatterplot(x=cluster_column, y= cluster_column, hue='Cluster', data=st.session_state.df)
                 st.pyplot(fig)
+        
+        #Display the entire dataset in a new tab
+        st.sidebar.markdown("""---""") 
+        if st.sidebar.button('View Entire Dataset', key='view_dataset'):
+            st.write('Viewing the entire dataset')
+            st.write(st.session_state.df)
+            st.markdown(get_table_download_link(st.session_state.df), unsafe_allow_html=True)
+        
+
     st.sidebar.markdown("""---""") 
+
+    #    Button to view the entire dataset in a new tab
+
+
 
 
 
