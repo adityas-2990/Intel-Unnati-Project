@@ -265,13 +265,6 @@ def main():
 
     st.sidebar.markdown("""---""") 
 
-    #    Button to view the entire dataset in a new tab
-
-
-
-
-
-
 # Call the main function directly
 if __name__ == "__main__":
     main()
