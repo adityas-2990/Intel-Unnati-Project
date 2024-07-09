@@ -109,6 +109,12 @@ def main():
         st.sidebar.header('Outliers')
         st.sidebar.write('Outliers are the data points that are significantly different from the other data points in the dataset. The outliers can be detected by plotting the data points in the column selected by the user. The user can select the column and the method to detect the outliers.')
         column_outliers = st.sidebar.selectbox('Select Column', options=st.session_state.df.columns.tolist())
+        #Handle error if the column selected is not numerical
+        if st.session_state.df[column_outliers].dtype not in ['int64', 'float64']:
+            st.write('Please select a numerical column to detect outliers')
+            st.error('Invalid Column Selected')
+            st.stop()
+        
         method_outliers = st.sidebar.radio(f'How to detect outliers in {column_outliers}', options=['Z-Score', 'IQR'])
         if st.sidebar.button('Detect Outliers', key='detect_outliers'):
             st.subheader('Outliers')
