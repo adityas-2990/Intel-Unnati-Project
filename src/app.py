@@ -257,10 +257,24 @@ def main():
                 fig = plt.figure()
                 sns.scatterplot(x=cluster_column, y= cluster_column, hue='Cluster', data=st.session_state.df)
                 st.pyplot(fig)
+
+        st.sidebar.markdown("""---""") 
+        #Regression Plot
+        st.sidebar.header('Regression Plot')
+        st.sidebar.write('Regression analysis is a form of predictive modelling technique which investigates the relationship between a dependent and independent variable. The regression plot can be used to visualize the relationship between the dependent and independent variable.')
+        x_feature_regression = st.sidebar.selectbox('X-axis', options=numerical_columns , key='x_feature_regression')
+        y_feature_regression = st.sidebar.selectbox('Y-axis', options=numerical_columns , key='y_feature_regression')
+        if st.sidebar.button('Plot Regression', key='plot_regression'):
+            st.write("Please Note the regression plot may not be exact for the choosen valiables due to the presence of outliers. The outliers can be detected using the outlier detection feature and removed outside the app. This regression plot shows the general trend between the variables.")
+            st.subheader('Regression Plot')
+            if x_feature_regression and y_feature_regression:
+                fig = plt.figure()
+                sns.regplot(x=x_feature_regression, y=y_feature_regression, data=st.session_state.df)
+                st.pyplot(fig)
         
         #Display the entire dataset in a new tab
         st.sidebar.markdown("""---""") 
-        if st.sidebar.button('View Entire Dataset', key='view_dataset'):
+        if st.sidebar.button('View and Download Entire Dataset', key='view_dataset'):
             st.write('Viewing the entire dataset')
             st.write(st.session_state.df)
             st.markdown(get_table_download_link(st.session_state.df), unsafe_allow_html=True)
