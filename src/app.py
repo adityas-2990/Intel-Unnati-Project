@@ -108,34 +108,31 @@ def main():
         #Plot and highlight Outliers in the user selected column
         st.sidebar.header('Outliers')
         st.sidebar.write('Outliers are the data points that are significantly different from the other data points in the dataset. The outliers can be detected by plotting the data points in the column selected by the user. The user can select the column and the method to detect the outliers.')
-        column_outliers = st.sidebar.selectbox('Select Column', options=st.session_state.df.columns.tolist())
-        #Handle error if the column selected is not numerical
-        if st.session_state.df[column_outliers].dtype not in ['int64', 'float64']:
-            st.write('Please select a numerical column to detect outliers')
-            st.error('Invalid Column Selected')
-            st.stop()
-        
+        column_outliers = st.sidebar.selectbox('Select Column', options=st.session_state.df.columns.tolist())       
         method_outliers = st.sidebar.radio(f'How to detect outliers in {column_outliers}', options=['Z-Score', 'IQR'])
         if st.sidebar.button('Detect Outliers', key='detect_outliers'):
             st.subheader('Outliers')
-            if method_outliers == 'Z-Score':
-                z = np.abs((st.session_state.df[column_outliers] - st.session_state.df[column_outliers].mean()) / st.session_state.df[column_outliers].std())
-                outliers = st.session_state.df[z > 3]
-                st.write(f'The outliers in the dataset based on {column_outliers} using z-score method are: ', outliers)
-                fig = plt.figure()
-                sns.boxplot(x=column_outliers, data=st.session_state.df)
-                st.pyplot(fig)
-            elif method_outliers == 'IQR':
-                Q1 = st.session_state.df[column_outliers].quantile(0.25)
-                Q3 = st.session_state.df[column_outliers].quantile(0.75)
-                IQR = Q3 - Q1
-                outliers = st.session_state.df[(st.session_state.df[column_outliers] < (Q1 - 1.5 * IQR)) | (st.session_state.df[column_outliers] > (Q3 + 1.5 * IQR))]
-                st.write(f'The outliers in the dataset based on {column_outliers} using IQR method are: ', outliers)
-                fig = plt.figure()
-                sns.boxplot(x=column_outliers, data=st.session_state.df)
-                st.pyplot(fig)
+            if column_outliers not in st.session_state.df.select_dtypes(include=['int64', 'float64']).columns:
+                st.write('Please select a numerical column to detect outliers')
             else:
-                st.write('Invalid Method')
+                if method_outliers == 'Z-Score':
+                    z = np.abs((st.session_state.df[column_outliers] - st.session_state.df[column_outliers].mean()) / st.session_state.df[column_outliers].std())
+                    outliers = st.session_state.df[z > 3]
+                    st.write(f'The outliers in the dataset based on {column_outliers} using z-score method are: ', outliers)
+                    fig = plt.figure()
+                    sns.boxplot(x=column_outliers, data=st.session_state.df)
+                    st.pyplot(fig)
+                elif method_outliers == 'IQR':
+                    Q1 = st.session_state.df[column_outliers].quantile(0.25)
+                    Q3 = st.session_state.df[column_outliers].quantile(0.75)
+                    IQR = Q3 - Q1
+                    outliers = st.session_state.df[(st.session_state.df[column_outliers] < (Q1 - 1.5 * IQR)) | (st.session_state.df[column_outliers] > (Q3 + 1.5 * IQR))]
+                    st.write(f'The outliers in the dataset based on {column_outliers} using IQR method are: ', outliers)
+                    fig = plt.figure()
+                    sns.boxplot(x=column_outliers, data=st.session_state.df)
+                    st.pyplot(fig)
+                else:
+                    st.write('Invalid Method')
         st.sidebar.markdown("""---""") 
 
 
