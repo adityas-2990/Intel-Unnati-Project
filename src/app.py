@@ -272,7 +272,7 @@ def main():
                 sns.regplot(x=x_feature_regression, y=y_feature_regression, data=st.session_state.df)
                 st.pyplot(fig)
         
-        #Display the entire dataset in a new tab
+        #Display the entire datase
         st.sidebar.markdown("""---""") 
         if st.sidebar.button('View and Download Entire Dataset', key='view_dataset'):
             st.write('Viewing the entire dataset')
